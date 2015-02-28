@@ -3,18 +3,12 @@ package nu.mine.wberg.listenerapp.environments;
 import android.content.res.Resources;
 import android.os.Environment;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInput;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -57,9 +51,8 @@ public class EnvironmentManager {
             return result;
         }
 
-        InputStream file = new FileInputStream(environments);
-        InputStream buffer = new BufferedInputStream(file);
-        ObjectInput input = new ObjectInputStream(buffer);
+        FileInputStream fis = new FileInputStream(environments);
+        ObjectInputStream input = new ObjectInputStream(fis);
 
         try {
             return (Map<String, ListeningEnvironment>)input.readObject();
@@ -69,9 +62,7 @@ public class EnvironmentManager {
         }
     }
 
-    private void saveListeningEnvironments() throws IOException {
-        Map<String, ListeningEnvironment> result = new HashMap<>();
-
+    public void saveListeningEnvironments() throws IOException {
         File esDir = Environment.getExternalStorageDirectory();
         File laDir = new File(esDir, resources.getString(R.string.app_dir));
         if (!laDir.isDirectory()) {
@@ -83,13 +74,12 @@ public class EnvironmentManager {
         File environments = new File(laDir, environmentsFilename);
         File environmentsTemporary = new File(laDir, environmentsTemporaryFilename);
 
-        OutputStream fos = new FileOutputStream(environmentsTemporary);
-        OutputStream bos = new BufferedOutputStream(fos);
-        ObjectOutput output = new ObjectOutputStream(bos);
-        try{
-            output.writeObject(environments);
+        FileOutputStream fos = new FileOutputStream(environmentsTemporary);
+        ObjectOutputStream output = new ObjectOutputStream(fos);
+        try {
+            output.writeObject(namesToEnvironments);
         }
-        finally{
+        finally {
             output.close();
         }
 

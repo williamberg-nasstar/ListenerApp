@@ -5,10 +5,6 @@ import android.media.AudioRecord;
 import android.media.MediaRecorder.AudioSource;
 import android.util.Log;
 
-/**
- * http://stackoverflow.com/a/7028963
- * Thread to manage live recording/playback of voice input from the device's microphone.
- */
 public class Record extends Thread {
 
     private static final String LOG_TAG = "Record";
