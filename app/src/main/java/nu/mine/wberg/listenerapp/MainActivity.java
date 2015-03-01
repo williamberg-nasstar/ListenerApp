@@ -1,6 +1,7 @@
 package nu.mine.wberg.listenerapp;
 
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
@@ -83,7 +84,7 @@ public class MainActivity extends ActionBarActivity {
 
         ((TextView)findViewById(R.id.errorLabel)).setText("Recording...");
 
-        new RecordHandler(environment).run();
+        new RecordHandler(environment).execute();
     }
 
     private String getSelectedEnvironment() throws IllegalStateException {
@@ -119,7 +120,7 @@ public class MainActivity extends ActionBarActivity {
         recordSpinner.setAdapter(dataAdapter);
     }
 
-    private final class RecordHandler implements Runnable {
+    private final class RecordHandler extends AsyncTask<Void, Void, Void> {
 
         private String environment;
 
@@ -128,7 +129,7 @@ public class MainActivity extends ActionBarActivity {
         }
 
         @Override
-        public void run() {
+        protected Void doInBackground(Void... params) {
             threadHandler.post(new StartRecording());
             record.run();
             while (record.isRecording()) {
@@ -138,7 +139,7 @@ public class MainActivity extends ActionBarActivity {
                 catch (InterruptedException e) {
                     Log.e(LOG_TAG, "Interrupted while waiting for recording to finish", e);
                     threadHandler.post(new EndRecording());
-                    return;
+                    return null;
                 }
             }
 
@@ -160,11 +161,12 @@ public class MainActivity extends ActionBarActivity {
             catch (IOException e) {
                 threadHandler.post(new ErrorSetter(e.getMessage()));
                 threadHandler.post(new EndRecording());
-                return;
+                return null;
             }
 
             threadHandler.post(new ErrorSetter("Recorded a new sample for '" + environment + "'"));
             threadHandler.post(new EndRecording());
+            return null;
         }
     }
 

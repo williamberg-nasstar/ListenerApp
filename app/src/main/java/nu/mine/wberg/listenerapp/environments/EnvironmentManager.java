@@ -46,20 +46,26 @@ public class EnvironmentManager {
             laDir.mkdir();
             return result;
         }
-        File environments = new File(laDir, resources.getString(R.string.app_environments_file));
-        if (!environments.isFile()) {
-            return result;
+    
+        for (File file : laDir.listFiles()) {
+            String filename = file.getName();
+            if (!filename.endsWith(resources.getString(R.string.environment_file_suffix))) {
+                continue;
+            }
+
+            String environmentName = filename.substring(0, filename.length() - 4);
+            FileInputStream fis = new FileInputStream(file);
+            ObjectInputStream input = new ObjectInputStream(fis);
+
+            try {
+                result.put(environmentName, (ListeningEnvironment)input.readObject());
+            }
+            finally {
+                 input.close();
+            }
         }
 
-        FileInputStream fis = new FileInputStream(environments);
-        ObjectInputStream input = new ObjectInputStream(fis);
-
-        try {
-            return (Map<String, ListeningEnvironment>)input.readObject();
-        }
-        finally {
-             input.close();
-        }
+        return result;
     }
 
     public void saveListeningEnvironments() throws IOException {
@@ -69,22 +75,29 @@ public class EnvironmentManager {
             laDir.mkdir();
         }
 
-        String environmentsFilename = resources.getString(R.string.app_environments_file);
-        String environmentsTemporaryFilename = environmentsFilename.concat(TEMPORARY_SAVE_FILE_SUFFIX);
-        File environments = new File(laDir, environmentsFilename);
-        File environmentsTemporary = new File(laDir, environmentsTemporaryFilename);
+        for (String name : namesToEnvironments.keySet()) {
+            ListeningEnvironment listeningEnvironment = namesToEnvironments.get(name);
+            if (!listeningEnvironment.isSaveDirty()) {
+                continue;
+            }
 
-        FileOutputStream fos = new FileOutputStream(environmentsTemporary);
-        ObjectOutputStream output = new ObjectOutputStream(fos);
-        try {
-            output.writeObject(namesToEnvironments);
-        }
-        finally {
-            output.close();
-        }
+            String filename = name.concat(resources.getString(R.string.environment_file_suffix));
+            String temporaryFilename = filename.concat(TEMPORARY_SAVE_FILE_SUFFIX);
+            File file = new File(laDir, filename);
+            File fileTemporary = new File(laDir, temporaryFilename);
 
-        environments.delete();
-        environmentsTemporary.renameTo(environments);
+            FileOutputStream fos = new FileOutputStream(fileTemporary);
+            ObjectOutputStream output = new ObjectOutputStream(fos);
+            try {
+                output.writeObject(namesToEnvironments.get(name));
+            }
+            finally {
+                output.close();
+            }
+
+            file.delete();
+            fileTemporary.renameTo(file);
+        }
     }
 
 }

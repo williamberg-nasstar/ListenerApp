@@ -10,13 +10,24 @@ import java.util.Set;
 public class ListeningEnvironment implements Serializable {
 
     private Set<short[]> recordings;
+    private boolean saveDirty;
 
     public ListeningEnvironment() {
         recordings = new HashSet<>();
+        saveDirty = false;
     }
 
     public void add(short[] recording) {
         recordings.add(recording);
+        saveDirty = true;
+    }
+
+    public boolean isSaveDirty() {
+        return saveDirty;
+    }
+
+    public void setSaveDirty(boolean saveDirty) {
+        this.saveDirty = saveDirty;
     }
 
 }

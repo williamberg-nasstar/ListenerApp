@@ -3,7 +3,7 @@
 
     <string name="app_name">ListenerApp</string>
     <string name="app_dir">ListenerApp</string>
-    <string name="app_environments_file">namesToEnvironments.job</string>
+    <string name="environment_file_suffix">.env</string>
 
     <string name="error_message_unable_to_read_file">Unable to read application file</string>
 
