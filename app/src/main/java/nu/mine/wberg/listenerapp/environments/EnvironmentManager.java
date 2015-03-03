@@ -46,7 +46,7 @@ public class EnvironmentManager {
             laDir.mkdir();
             return result;
         }
-    
+
         for (File file : laDir.listFiles()) {
             String filename = file.getName();
             if (!filename.endsWith(resources.getString(R.string.environment_file_suffix))) {

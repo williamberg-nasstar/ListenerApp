@@ -18,6 +18,8 @@ import android.widget.TextView;
 import java.io.IOException;
 import java.util.Map;
 
+import nu.mine.wberg.listenerapp.analysis.mfcc.amfcc.MfcFingerprint;
+import nu.mine.wberg.listenerapp.analysis.mfcc.bmfcc.MFCC;
 import nu.mine.wberg.listenerapp.environments.EnvironmentManager;
 import nu.mine.wberg.listenerapp.environments.ListeningEnvironment;
 import nu.mine.wberg.listenerapp.environments.Record;
@@ -26,12 +28,20 @@ import nu.mine.wberg.listenerapp.ui.GRadioGroup;
 
 public class MainActivity extends ActionBarActivity {
 
+    private static final int windowWidth = 512;
+    private static final int sampleRateHz = 44100;
+    private static final int mfccCoefficientCount = 5;
+    private static final double lowerFilterFreq = 22050;
+    private static final double upperFilterFreq = 20;
+    private static final int filterCount = 40;
+
     private static final int RECORD_TIME_MS = 1000;
     private static final String LOG_TAG = "Main";
 
     private final Handler threadHandler = new Handler();
     private EnvironmentManager environmentManager;
     private Record record;
+    private MFCC mfcc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +56,8 @@ public class MainActivity extends ActionBarActivity {
             Log.e(LOG_TAG, "Unable to load listening environments from file", e);
         }
 
-        record = new Record(RECORD_TIME_MS);
+        record = new Record(RECORD_TIME_MS, sampleRateHz);
+        mfcc = new MFCC(sampleRateHz, windowWidth, mfccCoefficientCount, true, lowerFilterFreq, upperFilterFreq, filterCount);
 
         RadioButton recordRadioButton1 = (RadioButton)findViewById(R.id.recordRadioButton1);
         RadioButton recordRadioButton2 = (RadioButton)findViewById(R.id.recordRadioButton2);
@@ -134,7 +145,7 @@ public class MainActivity extends ActionBarActivity {
             record.run();
             while (record.isRecording()) {
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(100);
                 }
                 catch (InterruptedException e) {
                     Log.e(LOG_TAG, "Interrupted while waiting for recording to finish", e);
@@ -144,13 +155,14 @@ public class MainActivity extends ActionBarActivity {
             }
 
             Map<String, ListeningEnvironment> namesToEnvironments = environmentManager.getNamesToEnvironments();
+            MfcFingerprint mfcFingerprint = new MfcFingerprint(mfcc.process(record.getRecording()));
             if (namesToEnvironments.containsKey(environment)) {
                 ListeningEnvironment listeningEnvironment = namesToEnvironments.get(environment);
-                listeningEnvironment.add(record.getRecording());
+                listeningEnvironment.setMfcFingerprint(mfcFingerprint);
             }
             else {
                 ListeningEnvironment listeningEnvironment = new ListeningEnvironment();
-                listeningEnvironment.add(record.getRecording());
+                listeningEnvironment.setMfcFingerprint(mfcFingerprint);
                 namesToEnvironments.put(environment, listeningEnvironment);
                 environmentManager.setNamesToEnvironments(namesToEnvironments);
             }
