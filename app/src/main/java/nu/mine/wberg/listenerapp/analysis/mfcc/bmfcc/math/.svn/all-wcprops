@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/!svn/ver/3/trunk/CoMIRVA/src/comirva/audio/util/math
+END
+QRDecomposition.java
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/!svn/ver/3/trunk/CoMIRVA/src/comirva/audio/util/math/QRDecomposition.java
+END
+EigenvalueDecomposition.java
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/!svn/ver/3/trunk/CoMIRVA/src/comirva/audio/util/math/EigenvalueDecomposition.java
+END
+NormalizedConvolution.java
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/!svn/ver/3/trunk/CoMIRVA/src/comirva/audio/util/math/NormalizedConvolution.java
+END
+Matrix.java
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/!svn/ver/3/trunk/CoMIRVA/src/comirva/audio/util/math/Matrix.java
+END
+Maths.java
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/!svn/ver/3/trunk/CoMIRVA/src/comirva/audio/util/math/Maths.java
+END
+LUDecomposition.java
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/!svn/ver/3/trunk/CoMIRVA/src/comirva/audio/util/math/LUDecomposition.java
+END
+CholeskyDecomposition.java
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/!svn/ver/3/trunk/CoMIRVA/src/comirva/audio/util/math/CholeskyDecomposition.java
+END
+SingularValueDecomposition.java
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/!svn/ver/3/trunk/CoMIRVA/src/comirva/audio/util/math/SingularValueDecomposition.java
+END
