@@ -373,10 +373,16 @@ public class MFCC
     return matrix;
   }
 
-  public double[][] process(short[] input) {
+    /**
+     * @author wberg
+     *
+     * Performs a conversion from short to double and squeezes the signal
+     * so it'll fit through the FFT.
+     */
+  public double[][] process(short[] input, double attenuationFactor) {
     double[] doubleInput = new double[input.length];
     for (int i = 0; i < input.length; i++) {
-        doubleInput[i] = (input[i] / Short.MAX_VALUE) * Double.MAX_VALUE;
+        doubleInput[i] = ((double) input[i] / Short.MAX_VALUE) * (Double.MAX_VALUE / attenuationFactor);
     }
     return process(doubleInput);
   }
@@ -471,10 +477,10 @@ public class MFCC
     x = melFilterBanks.times(x);
 
     //to db
-    double log10 = 10 * (1 / Math.log(10)); // log for base 10 and scale by factor 10
-    x.thrunkAtLowerBoundary(1);
-    x.logEquals();
-    x.timesEquals(log10);
+//    double log10 = 10 * (1 / Math.log(10)); // log for base 10 and scale by factor 10
+//    x.thrunkAtLowerBoundary(1);
+//    x.logEquals();
+//    x.timesEquals(log10);
 
     //compute DCT
     x = dctMatrix.times(x);

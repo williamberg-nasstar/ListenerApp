@@ -272,6 +272,8 @@ public final class FFT
     {
       r = re[j] / windowFunctionSum * 2;
       i = im[j] / windowFunctionSum * 2;
+      double rSquared = r * r;
+      double iSquared = i * i;
       re[j] = r * r + i * i;
     }
   }

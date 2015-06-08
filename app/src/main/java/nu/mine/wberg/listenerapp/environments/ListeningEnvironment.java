@@ -1,10 +1,10 @@
 package nu.mine.wberg.listenerapp.environments;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
-import nu.mine.wberg.listenerapp.analysis.mfcc.amfcc.MfcFingerprint;
+import nu.mine.wberg.listenerapp.analysis.mfcc.MfcFingerprint;
 
 /**
  * @author wberg
@@ -12,23 +12,24 @@ import nu.mine.wberg.listenerapp.analysis.mfcc.amfcc.MfcFingerprint;
 public class ListeningEnvironment implements Serializable {
 
     private boolean saveDirty;
-    private MfcFingerprint mfcFingerprint;
+    private Set<MfcFingerprint> mfcFingerprints;
 
     public ListeningEnvironment() {
+        mfcFingerprints = new HashSet<>();
         saveDirty = false;
     }
 
-    public void setMfcFingerprint(MfcFingerprint mfcFingerprint) {
-        this.mfcFingerprint = mfcFingerprint;
+    public void addMfcFingerprint(MfcFingerprint mfcFingerprint) {
+        mfcFingerprints.add(mfcFingerprint);
         saveDirty = true;
+    }
+
+    public Set<MfcFingerprint> getMfcFingerprints() {
+        return mfcFingerprints;
     }
 
     public boolean isSaveDirty() {
         return saveDirty;
-    }
-
-    public void setSaveDirty(boolean saveDirty) {
-        this.saveDirty = saveDirty;
     }
 
 }
