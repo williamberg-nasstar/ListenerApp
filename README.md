@@ -1,6 +1,6 @@
 #ListenerApp
 
-Implements the application of my final year project. Research paper at: http://wberg.mine.nu/p/Project\_report.pdf
+Implements the application of my final year project. Research paper at: http://wberg.mine.nu/p/Project_report.pdf
 
 Build from source with `./gradlew all` in the standard way. An .apk build is available at: http://wberg.mine.nu/p/ListenerApp.apk
 
