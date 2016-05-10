@@ -3,7 +3,7 @@
     android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity"
+    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".activity.MainActivity"
     android:orientation="vertical">
 
     <TextView
@@ -64,7 +64,7 @@
         android:src="@drawable/rec"
         android:scaleType="fitStart"
         android:layout_gravity="center_horizontal"
-        android:onClick="recordForSelectedEnvironment" />
+        android:onClick="recordSelectedSpeakerButton" />
 
     <Space
         android:layout_width="match_parent"
@@ -87,17 +87,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Test"
-        android:id="@+id/testLabel"
+        android:text="Listen mode"
+        android:id="@+id/listenModeLabel"
         android:layout_gravity="center_horizontal" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Test environment"
-        android:id="@+id/testButton"
+        android:text="Start listen mode"
+        android:id="@+id/toggleListenModeButton"
         android:layout_gravity="center_horizontal"
-        android:onClick="testAudio" />
+        android:onClick="toggleListenMode" />
 
     <TextView
         android:layout_width="wrap_content"

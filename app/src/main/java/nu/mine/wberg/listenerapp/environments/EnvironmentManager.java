@@ -9,6 +9,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,7 +18,7 @@ import nu.mine.wberg.listenerapp.R;
 /**
  * @author wberg
  */
-public class EnvironmentManager {
+public class EnvironmentManager implements Serializable {
 
     private static final String TEMPORARY_SAVE_FILE_SUFFIX = ".new";
 
@@ -31,6 +32,10 @@ public class EnvironmentManager {
 
     public Map<String, ListeningEnvironment> getNamesToEnvironments() {
         return namesToEnvironments;
+    }
+
+    public HashMap<String, ListeningEnvironment> getSerializableNamesToEnvironments() {
+        return new HashMap<>(getNamesToEnvironments());
     }
 
     public void setNamesToEnvironments(Map<String, ListeningEnvironment> namesToEnvironments) {

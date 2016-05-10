@@ -1,6 +1,5 @@
-package nu.mine.wberg.listenerapp.ui;
+package nu.mine.wberg.listenerapp.activity;
 
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.RadioButton;
