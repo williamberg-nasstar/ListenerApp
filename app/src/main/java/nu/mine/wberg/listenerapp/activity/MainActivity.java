@@ -20,7 +20,7 @@ import java.util.Set;
 
 import nu.mine.wberg.listenerapp.R;
 import nu.mine.wberg.listenerapp.analysis.mfcc.bmfcc.MFCC;
-import nu.mine.wberg.listenerapp.environments.EnvironmentManager;
+import nu.mine.wberg.listenerapp.speakers.SpeakerManager;
 import nu.mine.wberg.listenerapp.ml.Classifier;
 import nu.mine.wberg.listenerapp.ml.KNearestClassifier;
 
@@ -41,7 +41,7 @@ public class MainActivity extends ActionBarActivity {
     private static final int LISTEN_MODE_INTERVAL_MS = 10000;
 
     private final Handler threadHandler = new Handler();
-    private EnvironmentManager environmentManager;
+    private SpeakerManager speakerManager;
 
     private boolean listenMode = false;
     private boolean recordMode = false;
@@ -54,11 +54,11 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
 
         try {
-            environmentManager = new EnvironmentManager(getResources());
+            speakerManager = new SpeakerManager(getResources());
         }
         catch (IOException | ClassNotFoundException e) {
             threadHandler.post(new Alert(R.string.error_message_unable_to_read_file + ": " + e.getMessage()));
-            Log.e(LOG_TAG, "Unable to load listening environments from file", e);
+            Log.e(LOG_TAG, "Unable to load listening speakers from file", e);
         }
 
         mfcc = new MFCC(sampleRateHz, WINDOW_WIDTH, mfccCoefficientCount, true, lowerFilterFreq, upperFilterFreq, filterCount);
@@ -68,7 +68,7 @@ public class MainActivity extends ActionBarActivity {
         RadioButton recordRadioButton2 = (RadioButton)findViewById(R.id.recordRadioButton2);
         new GRadioGroup(recordRadioButton1, recordRadioButton2);
 
-        loadEnvironments();
+        loadSpeakers();
     }
 
     @Override
@@ -84,9 +84,9 @@ public class MainActivity extends ActionBarActivity {
         return id == R.id.action_settings || super.onOptionsItemSelected(item);
     }
 
-    private void loadEnvironments() {
+    private void loadSpeakers() {
         Spinner recordSpinner = (Spinner) findViewById(R.id.recordSpinner);
-        Set<String> strings = environmentManager.getNamesToEnvironments().keySet();
+        Set<String> strings = speakerManager.getNamesToSpeakers().keySet();
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item,
                 strings.toArray(new String[strings.size()]));
@@ -94,6 +94,9 @@ public class MainActivity extends ActionBarActivity {
         recordSpinner.setAdapter(dataAdapter);
     }
 
+    /**
+     * Callback for the record button
+     */
     public void recordSelectedSpeakerButton(View v) {
         if (recordMode) {
             return;
@@ -110,9 +113,12 @@ public class MainActivity extends ActionBarActivity {
         recordMode = true;
         threadHandler.post(new Alert("Recording for speaker '" + speaker + "'"));
 
-        RecordNewSpeakerIntentService.recordNewSpeaker(this, new RecordNewSpeakerResultReceiver(new Handler()), speaker, environmentManager, mfcc);
+        RecordNewSpeakerIntentService.recordNewSpeaker(this, new RecordNewSpeakerResultReceiver(new Handler()), speaker, speakerManager, mfcc);
     }
 
+    /**
+     * Callback for the listen mode button
+     */
     public void toggleListenMode(View v) throws IOException, ClassNotFoundException {
         if (recordMode) {
             threadHandler.post(new Alert("Unable to listen while in record mode"));
@@ -122,7 +128,7 @@ public class MainActivity extends ActionBarActivity {
         if (!listenMode) {
             listenMode = true;
             threadHandler.post(new Alert("Listen mode enabled"));
-            ListenModeTask.startListenMode(this, LISTEN_MODE_INTERVAL_MS, environmentManager, mfcc, classifier);
+            ListenModeTask.startListenMode(this, LISTEN_MODE_INTERVAL_MS, speakerManager, mfcc, classifier);
         }
         else {
             listenMode = false;
@@ -131,28 +137,37 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
+    /**
+     * If the first radio button is selected, reads from the text input field
+     *        second                        , reads from the combo box
+     * @return the selected speaker according to GUI components
+     */
     private String getSelectedSpeaker() throws IllegalStateException {
         RadioButton recordRadioButton1 = (RadioButton)findViewById(R.id.recordRadioButton1);
         RadioButton recordRadioButton2 = (RadioButton)findViewById(R.id.recordRadioButton2);
 
         if (recordRadioButton1.isChecked()) {
-            String environment = (String)((Spinner)findViewById(R.id.recordSpinner)).getSelectedItem();
-            if (null != environment && !"".equals(environment)) {
-                return environment;
+            String speaker = (String)((Spinner)findViewById(R.id.recordSpinner)).getSelectedItem();
+            if (null != speaker && !"".equals(speaker)) {
+                return speaker;
             }
-            throw new IllegalStateException("Existing environment was indicated but no existing environment was selected");
+            throw new IllegalStateException("Existing speaker was indicated but no existing speaker was selected");
         } else if (recordRadioButton2.isChecked()) {
-            String environment = ((EditText)findViewById(R.id.recordText)).getText().toString();
-            if (!"".equals(environment)) {
-                return environment;
+            String speaker = ((EditText)findViewById(R.id.recordText)).getText().toString();
+            if (!"".equals(speaker)) {
+                return speaker;
             } else {
-                throw new IllegalStateException("New environment was indicated but no name was specified");
+                throw new IllegalStateException("New speaker was indicated but no name was specified");
             }
         }
 
-        throw new IllegalStateException("Select an environment to record");
+        throw new IllegalStateException("Select an speaker to record");
     }
 
+    /**
+     * Alert with
+     * threadHandler.post(new Alert("Record failed: " + e.getMessage()));
+     */
     private final class Alert implements Runnable {
 
         private String error;
@@ -168,6 +183,9 @@ public class MainActivity extends ActionBarActivity {
 
     }
 
+    /**
+     * Callback after completion of a new speaker recording
+     */
     @SuppressLint("ParcelCreator")
     public class RecordNewSpeakerResultReceiver extends ResultReceiver {
 

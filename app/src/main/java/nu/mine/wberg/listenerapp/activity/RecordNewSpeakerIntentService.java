@@ -12,14 +12,17 @@ import java.util.Map;
 
 import nu.mine.wberg.listenerapp.analysis.mfcc.MfcFingerprint;
 import nu.mine.wberg.listenerapp.analysis.mfcc.bmfcc.MFCC;
-import nu.mine.wberg.listenerapp.environments.EnvironmentManager;
-import nu.mine.wberg.listenerapp.environments.ListeningEnvironment;
-import nu.mine.wberg.listenerapp.environments.Record;
+import nu.mine.wberg.listenerapp.speakers.SpeakerManager;
+import nu.mine.wberg.listenerapp.speakers.Speaker;
+import nu.mine.wberg.listenerapp.speakers.Record;
 
+/**
+ * Provides a static method to run the record new speaker background service.
+ */
 public class RecordNewSpeakerIntentService extends IntentService {
 
     private static String currentSpeaker;
-    private static EnvironmentManager currentEnvironmentManager;
+    private static SpeakerManager currentSpeakerManager;
     private static MFCC currentMfcc;
     private static ResultReceiver currentResultReceiver;
 
@@ -36,23 +39,23 @@ public class RecordNewSpeakerIntentService extends IntentService {
         short[] record = (new Record()).record(RECORD_TIME_MS, MainActivity.sampleRateHz);
         MfcFingerprint mfcFingerprint = new MfcFingerprint(currentMfcc.process(record, MainActivity.ATTENUATION_FACTOR));
 
-        Map<String, ListeningEnvironment> namesToEnvironments = currentEnvironmentManager.getNamesToEnvironments();
+        Map<String, Speaker> namesToSpeakers = currentSpeakerManager.getNamesToSpeakers();
 
-        if (namesToEnvironments.containsKey(currentSpeaker)) {
-            ListeningEnvironment listeningEnvironment = namesToEnvironments.get(currentSpeaker);
-            listeningEnvironment.addMfcFingerprint(mfcFingerprint);
+        if (namesToSpeakers.containsKey(currentSpeaker)) {
+            Speaker speaker = namesToSpeakers.get(currentSpeaker);
+            speaker.addMfcFingerprint(mfcFingerprint);
         } else {
-            ListeningEnvironment listeningEnvironment = new ListeningEnvironment();
-            listeningEnvironment.addMfcFingerprint(mfcFingerprint);
-            namesToEnvironments.put(currentSpeaker, listeningEnvironment);
-            currentEnvironmentManager.setNamesToEnvironments(namesToEnvironments);
+            Speaker speaker = new Speaker();
+            speaker.addMfcFingerprint(mfcFingerprint);
+            namesToSpeakers.put(currentSpeaker, speaker);
+            currentSpeakerManager.setNamesToSpeakers(namesToSpeakers);
         }
 
         Bundle resultData = new Bundle();
         resultData.putString("speaker", currentSpeaker);
 
         try {
-            currentEnvironmentManager.saveListeningEnvironments();
+            currentSpeakerManager.saveListeningSpeakers();
         } catch (IOException e) {
             currentResultReceiver.send(1, resultData);
         }
@@ -63,11 +66,11 @@ public class RecordNewSpeakerIntentService extends IntentService {
     public static void recordNewSpeaker(Context context,
                                  ResultReceiver resultReceiver,
                                  String speaker,
-                                 EnvironmentManager environmentManager,
+                                 SpeakerManager speakerManager,
                                  MFCC mfcc) {
         currentResultReceiver = resultReceiver;
         currentSpeaker = speaker;
-        currentEnvironmentManager = environmentManager;
+        currentSpeakerManager = speakerManager;
         currentMfcc = mfcc;
 
         Intent intent = new Intent(context, RecordNewSpeakerIntentService.class);

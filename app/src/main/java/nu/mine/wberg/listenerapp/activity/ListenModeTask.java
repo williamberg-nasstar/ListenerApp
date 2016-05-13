@@ -13,23 +13,35 @@ import android.util.Log;
 import nu.mine.wberg.listenerapp.R;
 import nu.mine.wberg.listenerapp.analysis.mfcc.MfcFingerprint;
 import nu.mine.wberg.listenerapp.analysis.mfcc.bmfcc.MFCC;
-import nu.mine.wberg.listenerapp.environments.EnvironmentManager;
-import nu.mine.wberg.listenerapp.environments.Record;
+import nu.mine.wberg.listenerapp.speakers.SpeakerManager;
+import nu.mine.wberg.listenerapp.speakers.Record;
 import nu.mine.wberg.listenerapp.ml.Classifier;
 
-
+/**
+ * This class contains both the listening task, and the methods for scheduling
+ * it. These need to be kept together. However, this BroadcastReceiver must be
+ * specified in this class, and not as an inner class: AndroidManifest.xml does
+ * not support inner classes as receivers. Instead, to schedule the task, we use
+ * static methods.
+ *
+ * This class would be more testable if its dependencies were injected, to
+ * replace the static methods.
+ */
 public class ListenModeTask extends BroadcastReceiver {
 
     private static final int RECORD_TIME_MS = 1000;
     private static final String LOG_TAG = "intent_service";
 
-    private static EnvironmentManager currentEnvironmentManager;
+    private static SpeakerManager currentSpeakerManager;
     private static MFCC currentMfcc;
     private static Classifier currentClassifier;
 
+    /**
+     * Schedules
+     */
     public static void startListenMode(Context context, int intervalMs,
-                                       EnvironmentManager environmentManager, MFCC mfcc, Classifier classifier) {
-        currentEnvironmentManager = environmentManager;
+                                       SpeakerManager speakerManager, MFCC mfcc, Classifier classifier) {
+        currentSpeakerManager = speakerManager;
         currentMfcc = mfcc;
         currentClassifier = classifier;
 
@@ -46,13 +58,16 @@ public class ListenModeTask extends BroadcastReceiver {
         alarmManager.cancel(sender);
     }
 
+    /**
+     * Called when the alarm manager triggers this task
+     */
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.i("listening", "listening for speaker");
 
         short[] recording = (new Record()).record(RECORD_TIME_MS, MainActivity.sampleRateHz);
         MfcFingerprint mfcFingerprint = new MfcFingerprint(currentMfcc.process(recording, MainActivity.ATTENUATION_FACTOR));
-        String speaker = currentClassifier.classify(currentEnvironmentManager.getNamesToEnvironments(), mfcFingerprint);
+        String speaker = currentClassifier.classify(currentSpeakerManager.getNamesToSpeakers(), mfcFingerprint);
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(context)

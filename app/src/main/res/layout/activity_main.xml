@@ -3,7 +3,7 @@
     android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".activity.MainActivity"
+    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity"
     android:orientation="vertical">
 
     <TextView
@@ -16,12 +16,12 @@
         android:enabled="true" />
 
     <TableLayout
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal">
 
         <TableRow
-            android:layout_width="match_parent"
+            android:layout_width="fill_parent"
             android:layout_height="fill_parent">
 
             <RadioButton
@@ -39,7 +39,7 @@
         </TableRow>
 
         <TableRow
-            android:layout_width="match_parent"
+            android:layout_width="fill_parent"
             android:layout_height="fill_parent">
 
             <RadioButton
@@ -64,7 +64,7 @@
         android:src="@drawable/rec"
         android:scaleType="fitStart"
         android:layout_gravity="center_horizontal"
-        android:onClick="recordSelectedSpeakerButton" />
+        android:onClick="recordForSelectedEnvironment" />
 
     <Space
         android:layout_width="match_parent"

@@ -1,4 +1,4 @@
-package nu.mine.wberg.listenerapp.environments;
+package nu.mine.wberg.listenerapp.speakers;
 
 import android.content.res.Resources;
 import android.os.Environment;
@@ -15,35 +15,35 @@ import java.util.Map;
 
 import nu.mine.wberg.listenerapp.R;
 
-/**
- * @author wberg
- */
-public class EnvironmentManager implements Serializable {
+public class SpeakerManager implements Serializable {
 
     private static final String TEMPORARY_SAVE_FILE_SUFFIX = ".new";
 
     private Resources resources;
-    private Map<String, ListeningEnvironment> namesToEnvironments;
+    private Map<String, Speaker> namesToSpeakers;
 
-    public EnvironmentManager(Resources resources) throws IOException, ClassNotFoundException {
+    /**
+     * When created, loads from R.app_dir on external storage
+     */
+    public SpeakerManager(Resources resources) throws IOException, ClassNotFoundException {
         this.resources = resources;
-        namesToEnvironments = loadListeningEnvironments();
+        namesToSpeakers = loadListeningSpeakers();
     }
 
-    public Map<String, ListeningEnvironment> getNamesToEnvironments() {
-        return namesToEnvironments;
+    public Map<String, Speaker> getNamesToSpeakers() {
+        return namesToSpeakers;
     }
 
-    public HashMap<String, ListeningEnvironment> getSerializableNamesToEnvironments() {
-        return new HashMap<>(getNamesToEnvironments());
+    public HashMap<String, Speaker> getSerializableNamesToSpeakers() {
+        return new HashMap<>(getNamesToSpeakers());
     }
 
-    public void setNamesToEnvironments(Map<String, ListeningEnvironment> namesToEnvironments) {
-        this.namesToEnvironments = namesToEnvironments;
+    public void setNamesToSpeakers(Map<String, Speaker> namesToSpeakers) {
+        this.namesToSpeakers = namesToSpeakers;
     }
 
-    private Map<String, ListeningEnvironment> loadListeningEnvironments() throws IOException, ClassNotFoundException {
-        Map<String, ListeningEnvironment> result = new HashMap<>();
+    private Map<String, Speaker> loadListeningSpeakers() throws IOException, ClassNotFoundException {
+        Map<String, Speaker> result = new HashMap<>();
 
         File esDir = Environment.getExternalStorageDirectory();
         File laDir = new File(esDir, resources.getString(R.string.app_dir));
@@ -54,16 +54,16 @@ public class EnvironmentManager implements Serializable {
 
         for (File file : laDir.listFiles()) {
             String filename = file.getName();
-            if (!filename.endsWith(resources.getString(R.string.environment_file_suffix))) {
+            if (!filename.endsWith(resources.getString(R.string.speaker_file_suffix))) {
                 continue;
             }
 
-            String environmentName = filename.substring(0, filename.length() - 4);
+            String speakerName = filename.substring(0, filename.length() - 4);
             FileInputStream fis = new FileInputStream(file);
             ObjectInputStream input = new ObjectInputStream(fis);
 
             try {
-                result.put(environmentName, (ListeningEnvironment)input.readObject());
+                result.put(speakerName, (Speaker)input.readObject());
             }
             finally {
                  input.close();
@@ -73,20 +73,23 @@ public class EnvironmentManager implements Serializable {
         return result;
     }
 
-    public void saveListeningEnvironments() throws IOException {
+    /**
+     * Saves to R.app_dir in external storage
+     */
+    public void saveListeningSpeakers() throws IOException {
         File esDir = Environment.getExternalStorageDirectory();
         File laDir = new File(esDir, resources.getString(R.string.app_dir));
         if (!laDir.isDirectory()) {
             laDir.mkdir();
         }
 
-        for (String name : namesToEnvironments.keySet()) {
-            ListeningEnvironment listeningEnvironment = namesToEnvironments.get(name);
-            if (!listeningEnvironment.isSaveDirty()) {
+        for (String name : namesToSpeakers.keySet()) {
+            Speaker speaker = namesToSpeakers.get(name);
+            if (!speaker.isSaveDirty()) {
                 continue;
             }
 
-            String filename = name.concat(resources.getString(R.string.environment_file_suffix));
+            String filename = name.concat(resources.getString(R.string.speaker_file_suffix));
             String temporaryFilename = filename.concat(TEMPORARY_SAVE_FILE_SUFFIX);
             File file = new File(laDir, filename);
             File fileTemporary = new File(laDir, temporaryFilename);
@@ -94,7 +97,7 @@ public class EnvironmentManager implements Serializable {
             FileOutputStream fos = new FileOutputStream(fileTemporary);
             ObjectOutputStream output = new ObjectOutputStream(fos);
             try {
-                output.writeObject(namesToEnvironments.get(name));
+                output.writeObject(namesToSpeakers.get(name));
             }
             finally {
                 output.close();

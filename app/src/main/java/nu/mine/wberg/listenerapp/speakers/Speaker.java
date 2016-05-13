@@ -1,4 +1,4 @@
-package nu.mine.wberg.listenerapp.environments;
+package nu.mine.wberg.listenerapp.speakers;
 
 import java.io.Serializable;
 import java.util.HashSet;
@@ -6,15 +6,12 @@ import java.util.Set;
 
 import nu.mine.wberg.listenerapp.analysis.mfcc.MfcFingerprint;
 
-/**
- * @author wberg
- */
-public class ListeningEnvironment implements Serializable {
+public class Speaker implements Serializable {
 
     private boolean saveDirty;
     private Set<MfcFingerprint> mfcFingerprints;
 
-    public ListeningEnvironment() {
+    public Speaker() {
         mfcFingerprints = new HashSet<>();
         saveDirty = false;
     }

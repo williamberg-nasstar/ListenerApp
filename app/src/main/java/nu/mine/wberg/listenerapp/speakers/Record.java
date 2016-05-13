@@ -1,4 +1,4 @@
-package nu.mine.wberg.listenerapp.environments;
+package nu.mine.wberg.listenerapp.speakers;
 
 import android.media.AudioFormat;
 import android.media.AudioRecord;

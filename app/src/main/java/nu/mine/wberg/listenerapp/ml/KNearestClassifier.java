@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import nu.mine.wberg.listenerapp.analysis.mfcc.MfcFingerprint;
-import nu.mine.wberg.listenerapp.environments.ListeningEnvironment;
+import nu.mine.wberg.listenerapp.speakers.Speaker;
 
 public class KNearestClassifier implements Classifier {
 
@@ -20,41 +20,41 @@ public class KNearestClassifier implements Classifier {
     }
 
     @Override
-    public String classify(Map<String, ListeningEnvironment> population, MfcFingerprint candidate) {
-        List<EnvironmentDistancePair> environments = new ArrayList<>();
+    public String classify(Map<String, Speaker> population, MfcFingerprint candidate) {
+        List<SpeakerDistancePair> speakers = new ArrayList<>();
 
-        for(String environmentName : population.keySet()) {
-            ListeningEnvironment listeningEnvironment = population.get(environmentName);
-            for (MfcFingerprint mfcFingerprint : listeningEnvironment.getMfcFingerprints()) {
+        for(String speakerName : population.keySet()) {
+            Speaker speaker = population.get(speakerName);
+            for (MfcFingerprint mfcFingerprint : speaker.getMfcFingerprints()) {
                 double pointDistance = euclideanDistance(mfcFingerprint.getMfc(), candidate.getMfc());
-                environments.add(new EnvironmentDistancePair(environmentName, pointDistance));
-                Log.d("classifier", environmentName + " was at distance " + pointDistance);
+                speakers.add(new SpeakerDistancePair(speakerName, pointDistance));
+                Log.d("classifier", speakerName + " was at distance " + pointDistance);
             }
         }
 
-        Collections.sort(environments);
-        List<EnvironmentDistancePair> kNearest = environments.subList(0, k);
+        Collections.sort(speakers);
+        List<SpeakerDistancePair> kNearest = speakers.subList(0, k);
 
-        HashMap<String, Integer> environmentCounts = new HashMap<>();
-        for (EnvironmentDistancePair environmentDistancePair : kNearest) {
-            if (environmentCounts.containsKey(environmentDistancePair.contextName)) {
-                environmentCounts.put(environmentDistancePair.contextName, environmentCounts.get(environmentDistancePair.contextName) + 1);
+        HashMap<String, Integer> speakerCounts = new HashMap<>();
+        for (SpeakerDistancePair speakerDistancePair : kNearest) {
+            if (speakerCounts.containsKey(speakerDistancePair.speakerName)) {
+                speakerCounts.put(speakerDistancePair.speakerName, speakerCounts.get(speakerDistancePair.speakerName) + 1);
             } else {
-                environmentCounts.put(environmentDistancePair.contextName, 1);
+                speakerCounts.put(speakerDistancePair.speakerName, 1);
             }
         }
 
         int highest = 0;
         String highestOccurringContext = "";
-        for(String c : environmentCounts.keySet()) {
-            Log.d("classifier", "context " + c + " occurred " + environmentCounts.get(c) + " times in " + k + " nearest");
-            if (environmentCounts.get(c) > highest) {
-                highest = environmentCounts.get(c);
+        for(String c : speakerCounts.keySet()) {
+            Log.d("classifier", "speaker " + c + " occurred " + speakerCounts.get(c) + " times in " + k + " nearest");
+            if (speakerCounts.get(c) > highest) {
+                highest = speakerCounts.get(c);
                 highestOccurringContext = c;
             }
         }
 
-        Log.d("classifier", "selected context " + highestOccurringContext);
+        Log.d("classifier", "selected speaker " + highestOccurringContext);
         return highestOccurringContext;
     }
 
@@ -67,18 +67,18 @@ public class KNearestClassifier implements Classifier {
         return Math.sqrt(acc);
     }
 
-    private static class EnvironmentDistancePair implements Comparable {
-        public String contextName;
+    private static class SpeakerDistancePair implements Comparable {
+        public String speakerName;
         public double distance;
 
-        public EnvironmentDistancePair(String contextName, double distance) {
-            this.contextName = contextName;
+        public SpeakerDistancePair(String speakerName, double distance) {
+            this.speakerName = speakerName;
             this.distance = distance;
         }
 
         @Override
         public int compareTo(Object o) {
-            return Double.compare(distance, ((EnvironmentDistancePair)o).distance);
+            return Double.compare(distance, ((SpeakerDistancePair)o).distance);
         }
 
     }

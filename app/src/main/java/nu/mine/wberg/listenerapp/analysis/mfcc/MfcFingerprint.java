@@ -2,9 +2,6 @@ package nu.mine.wberg.listenerapp.analysis.mfcc;
 
 import java.io.Serializable;
 
-/**
- * @author wberg
- */
 public class MfcFingerprint implements Serializable {
 
     /**
@@ -18,7 +15,7 @@ public class MfcFingerprint implements Serializable {
 
     public MfcFingerprint(double[][] mfcCoefficients) {
         int windows = mfcCoefficients.length;
-        int doors = mfcCoefficients[0].length;
+        int doors = mfcCoefficients[0].length; // the mean values
 
         mfc = new double[doors];
         for (int i = 0; i < doors; i++) {
