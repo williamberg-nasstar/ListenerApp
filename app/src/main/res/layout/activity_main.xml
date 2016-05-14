@@ -66,22 +66,56 @@
         android:layout_gravity="center_horizontal"
         android:onClick="recordForSelectedEnvironment" />
 
-    <Space
+    <View
         android:layout_width="match_parent"
-        android:layout_height="16dp"
-        android:layout_gravity="center_horizontal" />
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textAppearance="?android:attr/textAppearanceMedium"
         android:id="@+id/errorLabel"
         android:layout_gravity="center_horizontal" />
 
-    <Space
+    <View
         android:layout_width="match_parent"
-        android:layout_height="16dp"
-        android:layout_gravity="center_horizontal" />
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Reminder text"
+            android:id="@+id/reminderLabel"
+            android:layout_alignParentLeft="true" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Set for speaker"
+            android:id="@+id/setReminder"
+            android:gravity="right"
+            android:nestedScrollingEnabled="false"
+            android:onClick="setSpeakerReminder()"
+            android:layout_alignParentRight="true" /></RelativeLayout>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/reminderText" />
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
 
     <TextView
         android:layout_width="wrap_content"

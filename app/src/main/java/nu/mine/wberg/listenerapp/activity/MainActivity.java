@@ -20,6 +20,7 @@ import java.util.Set;
 
 import nu.mine.wberg.listenerapp.R;
 import nu.mine.wberg.listenerapp.analysis.mfcc.bmfcc.MFCC;
+import nu.mine.wberg.listenerapp.speakers.SpeakerData;
 import nu.mine.wberg.listenerapp.speakers.SpeakerManager;
 import nu.mine.wberg.listenerapp.ml.Classifier;
 import nu.mine.wberg.listenerapp.ml.KNearestClassifier;
@@ -135,6 +136,18 @@ public class MainActivity extends ActionBarActivity {
             threadHandler.post(new Alert("Listen mode disabled"));
             ListenModeTask.stopListenMode(this);
         }
+    }
+
+    /**
+     * Callback for the set speaker reminder button
+     */
+    public void setSpeakerReminder() {
+        String speaker = getSelectedSpeaker();
+        SpeakerData speakerData = speakerManager.getNamesToSpeakers().get(speaker);
+        String reminder = ((EditText)findViewById(R.id.reminderText)).getText().toString();
+
+        speakerData.setReminder(reminder);
+        threadHandler.post(new Alert("Reminder set"));
     }
 
     /**

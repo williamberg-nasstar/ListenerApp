@@ -13,7 +13,7 @@ import java.util.Map;
 import nu.mine.wberg.listenerapp.analysis.mfcc.MfcFingerprint;
 import nu.mine.wberg.listenerapp.analysis.mfcc.bmfcc.MFCC;
 import nu.mine.wberg.listenerapp.speakers.SpeakerManager;
-import nu.mine.wberg.listenerapp.speakers.Speaker;
+import nu.mine.wberg.listenerapp.speakers.SpeakerData;
 import nu.mine.wberg.listenerapp.speakers.Record;
 
 /**
@@ -39,13 +39,13 @@ public class RecordNewSpeakerIntentService extends IntentService {
         short[] record = (new Record()).record(RECORD_TIME_MS, MainActivity.sampleRateHz);
         MfcFingerprint mfcFingerprint = new MfcFingerprint(currentMfcc.process(record, MainActivity.ATTENUATION_FACTOR));
 
-        Map<String, Speaker> namesToSpeakers = currentSpeakerManager.getNamesToSpeakers();
+        Map<String, SpeakerData> namesToSpeakers = currentSpeakerManager.getNamesToSpeakers();
 
         if (namesToSpeakers.containsKey(currentSpeaker)) {
-            Speaker speaker = namesToSpeakers.get(currentSpeaker);
+            SpeakerData speaker = namesToSpeakers.get(currentSpeaker);
             speaker.addMfcFingerprint(mfcFingerprint);
         } else {
-            Speaker speaker = new Speaker();
+            SpeakerData speaker = new SpeakerData();
             speaker.addMfcFingerprint(mfcFingerprint);
             namesToSpeakers.put(currentSpeaker, speaker);
             currentSpeakerManager.setNamesToSpeakers(namesToSpeakers);

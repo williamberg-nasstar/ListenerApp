@@ -11,4 +11,4 @@ Build from source with `./gradlew all`. An .apk build is available at: http://wb
 
 This is a reminder app which fingerprints speakers by ambient sound and recognises them with a machine learning algorithm. It's basically a practical implementation of a classifier.
 
-At the moment, this app only reminds you that you wanted to speak with certain persons. Coming soon is the ability to associate each person with a specific conversation topic!
+You can specify a reminder topic to prompt you with when the application notices the speaker. This associates that person with a prompt topic.

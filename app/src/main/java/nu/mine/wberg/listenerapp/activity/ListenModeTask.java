@@ -10,9 +10,12 @@ import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import java.util.Map;
+
 import nu.mine.wberg.listenerapp.R;
 import nu.mine.wberg.listenerapp.analysis.mfcc.MfcFingerprint;
 import nu.mine.wberg.listenerapp.analysis.mfcc.bmfcc.MFCC;
+import nu.mine.wberg.listenerapp.speakers.SpeakerData;
 import nu.mine.wberg.listenerapp.speakers.SpeakerManager;
 import nu.mine.wberg.listenerapp.speakers.Record;
 import nu.mine.wberg.listenerapp.ml.Classifier;
@@ -69,11 +72,14 @@ public class ListenModeTask extends BroadcastReceiver {
         MfcFingerprint mfcFingerprint = new MfcFingerprint(currentMfcc.process(recording, MainActivity.ATTENUATION_FACTOR));
         String speaker = currentClassifier.classify(currentSpeakerManager.getNamesToSpeakers(), mfcFingerprint);
 
+        Map<String, SpeakerData> namesToSpeakers = currentSpeakerManager.getNamesToSpeakers();
+        SpeakerData speakerData = namesToSpeakers.get(speaker);
+
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(context)
                         .setSmallIcon(R.drawable.app_icon)
                         .setContentTitle(speaker)
-                        .setContentText(speaker + " is nearby");
+                        .setContentText("Topic: " + speakerData.getReminder());
 
         Intent notification = new Intent(context, MainActivity.class);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);

@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import nu.mine.wberg.listenerapp.analysis.mfcc.MfcFingerprint;
-import nu.mine.wberg.listenerapp.speakers.Speaker;
+import nu.mine.wberg.listenerapp.speakers.SpeakerData;
 
 public class KNearestClassifier implements Classifier {
 
@@ -20,11 +20,11 @@ public class KNearestClassifier implements Classifier {
     }
 
     @Override
-    public String classify(Map<String, Speaker> population, MfcFingerprint candidate) {
+    public String classify(Map<String, SpeakerData> population, MfcFingerprint candidate) {
         List<SpeakerDistancePair> speakers = new ArrayList<>();
 
         for(String speakerName : population.keySet()) {
-            Speaker speaker = population.get(speakerName);
+            SpeakerData speaker = population.get(speakerName);
             for (MfcFingerprint mfcFingerprint : speaker.getMfcFingerprints()) {
                 double pointDistance = euclideanDistance(mfcFingerprint.getMfc(), candidate.getMfc());
                 speakers.add(new SpeakerDistancePair(speakerName, pointDistance));

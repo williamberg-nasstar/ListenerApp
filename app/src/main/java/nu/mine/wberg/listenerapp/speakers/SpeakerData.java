@@ -6,12 +6,13 @@ import java.util.Set;
 
 import nu.mine.wberg.listenerapp.analysis.mfcc.MfcFingerprint;
 
-public class Speaker implements Serializable {
+public class SpeakerData implements Serializable {
 
     private boolean saveDirty;
     private Set<MfcFingerprint> mfcFingerprints;
+    private String reminder;
 
-    public Speaker() {
+    public SpeakerData() {
         mfcFingerprints = new HashSet<>();
         saveDirty = false;
     }
@@ -23,6 +24,14 @@ public class Speaker implements Serializable {
 
     public Set<MfcFingerprint> getMfcFingerprints() {
         return mfcFingerprints;
+    }
+
+    public String getReminder() {
+        return reminder;
+    }
+
+    public void setReminder(String reminder) {
+        this.reminder = reminder;
     }
 
     public boolean isSaveDirty() {

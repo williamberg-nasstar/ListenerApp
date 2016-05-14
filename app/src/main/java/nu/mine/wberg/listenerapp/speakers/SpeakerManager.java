@@ -20,7 +20,7 @@ public class SpeakerManager implements Serializable {
     private static final String TEMPORARY_SAVE_FILE_SUFFIX = ".new";
 
     private Resources resources;
-    private Map<String, Speaker> namesToSpeakers;
+    private Map<String, SpeakerData> namesToSpeakers;
 
     /**
      * When created, loads from R.app_dir on external storage
@@ -30,20 +30,20 @@ public class SpeakerManager implements Serializable {
         namesToSpeakers = loadListeningSpeakers();
     }
 
-    public Map<String, Speaker> getNamesToSpeakers() {
+    public Map<String, SpeakerData> getNamesToSpeakers() {
         return namesToSpeakers;
     }
 
-    public HashMap<String, Speaker> getSerializableNamesToSpeakers() {
+    public HashMap<String, SpeakerData> getSerializableNamesToSpeakers() {
         return new HashMap<>(getNamesToSpeakers());
     }
 
-    public void setNamesToSpeakers(Map<String, Speaker> namesToSpeakers) {
+    public void setNamesToSpeakers(Map<String, SpeakerData> namesToSpeakers) {
         this.namesToSpeakers = namesToSpeakers;
     }
 
-    private Map<String, Speaker> loadListeningSpeakers() throws IOException, ClassNotFoundException {
-        Map<String, Speaker> result = new HashMap<>();
+    private Map<String, SpeakerData> loadListeningSpeakers() throws IOException, ClassNotFoundException {
+        Map<String, SpeakerData> result = new HashMap<>();
 
         File esDir = Environment.getExternalStorageDirectory();
         File laDir = new File(esDir, resources.getString(R.string.app_dir));
@@ -63,7 +63,7 @@ public class SpeakerManager implements Serializable {
             ObjectInputStream input = new ObjectInputStream(fis);
 
             try {
-                result.put(speakerName, (Speaker)input.readObject());
+                result.put(speakerName, (SpeakerData)input.readObject());
             }
             finally {
                  input.close();
@@ -84,7 +84,7 @@ public class SpeakerManager implements Serializable {
         }
 
         for (String name : namesToSpeakers.keySet()) {
-            Speaker speaker = namesToSpeakers.get(name);
+            SpeakerData speaker = namesToSpeakers.get(name);
             if (!speaker.isSaveDirty()) {
                 continue;
             }
